@@ -15,8 +15,6 @@ class ActiveRecordBetterDependentErrorMessages::ErrorsCollector
 
   def collect!
     model._reflections.each do |reflection_name, reflection|
-      association = model.association(reflection_name)
-
       next if reflection.options[:dependent] != :destroy
 
       if reflection.macro == :has_many
