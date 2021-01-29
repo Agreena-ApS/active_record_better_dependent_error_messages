@@ -59,10 +59,14 @@ private
   def check_sub_destroy_association(association)
     if association.macro == :has_one
       sub_model = model.__send__(association.name)
+      return unless sub_model
+
       ActiveRecordBetterDependentErrorMessages::DestroyValidator.(root_model: root_model, model: sub_model, trace: trace + [sub_model]) if sub_model
     elsif association.macro == :has_many
       sub_models = model.__send__(association.name)
       sub_models.find_each do |sub_model_i|
+        next unless sub_model_i
+
         ActiveRecordBetterDependentErrorMessages::DestroyValidator.(root_model: root_model, model: sub_model_i, trace: trace + [sub_model_i])
       end
     end
