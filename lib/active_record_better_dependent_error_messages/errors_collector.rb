@@ -15,17 +15,19 @@ class ActiveRecordBetterDependentErrorMessages::ErrorsCollector
 
   def collect!
     model._reflections.each do |reflection_name, reflection|
-      association = model.association(reflection_name)
-
       next if reflection.options[:dependent] != :destroy
 
       if reflection.macro == :has_many
         model.__send__(reflection_name).each do |sub_model|
+          next unless sub_model
+
           scan_sub_model_for_errors(sub_model)
           ActiveRecordBetterDependentErrorMessages::ErrorsCollector.(model: sub_model, root_model: model)
         end
       elsif reflection.macro == :has_one
         sub_model = model.__send__(reflection_name)
+        next unless sub_model
+
         scan_sub_model_for_errors(sub_model)
         ActiveRecordBetterDependentErrorMessages::ErrorsCollector.(model: sub_model, root_model: model)
       end

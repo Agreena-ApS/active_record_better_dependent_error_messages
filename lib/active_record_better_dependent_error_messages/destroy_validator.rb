@@ -69,6 +69,8 @@ private
       sub_models = model.association(association.name).target
 
       sub_models.each do |sub_model_i|
+        next unless sub_model_i
+
         extract_sub_destroy_errors(association, sub_model_i)
         ActiveRecordBetterDependentErrorMessages::DestroyValidator.(root_model: root_model, model: sub_model_i, trace: trace + [sub_model_i])
       end
